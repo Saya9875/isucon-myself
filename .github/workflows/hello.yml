@@ -1,6 +1,14 @@
 name: Hello World Workflow
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
 
 jobs:
   say_hello:
@@ -8,3 +16,27 @@ jobs:
     steps:
       - name: Print Hello World
         run: echo "Hello World!"
+
+      - name: pull_request event ならbuildする
+        run: |
+          should_build_images="${{ contains(fromJson(steps.pull_request_labels.outputs.data).*.name, 'build-images') }}"
+          echo "BUILD_IMAGES=$should_build_images" >> $GITHUB_ENV
+        if: github.event_name == 'pull_request'
+
+      - name: pushかrelease event ならbuildする
+        run: |
+          echo "BUILD_IMAGES=true" >> $GITHUB_ENV
+        if: github.event_name == 'push' || github.event_name == 'release'
+
+      - name: GitHubOutputにbuild-imagesを登録
+        run: |
+          echo "build-images=$BUILD_IMAGES" >> $GITHUB_OUTPUT
+
+  build-images:
+    runs-on: ubuntu-latest
+    needs:
+      - say_hello
+    if: needs.say_hello.outputs.build-images == 'true'
+    steps:
+      - name: Build and push
+        run: echo "Build and Push成功"

@@ -13,7 +13,7 @@ on:
 jobs:
   say_hello:
     runs-on: ubuntu-latest
-    description: outputs.build-images = (pull_request && build-imagesラベルを持つ) || push || release
+    description: "outputs.build-images = (pull_request && build-imagesラベルを持つ) || push || release"
     steps:
       - name: Print Hello World
         run: echo "Hello World!"
@@ -46,7 +46,7 @@ jobs:
 
   build-images:
     runs-on: ubuntu-latest
-    description: say_hello.outputs.build-images == 'true'ならばBuild and Pushする
+    description: "say_hello.outputs.build-images == 'true'ならばBuild and Pushする"
     needs:
       - say_hello
     if: needs.say_hello.outputs.build-images == 'true'

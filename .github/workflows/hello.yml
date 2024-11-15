@@ -13,27 +13,40 @@ on:
 jobs:
   say_hello:
     runs-on: ubuntu-latest
+    description: outputs.build-images = (pull_request && build-imagesラベルを持つ) || push || release
     steps:
       - name: Print Hello World
         run: echo "Hello World!"
+      - name: pull_request event ならラベルを取得する
+        id: hoge
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/:repository/issues/:issue_number/labels
+          repository: ${{ github.repository }}
+          issue_number: ${{ github.event.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: github.event_name == 'pull_request'
 
-      - name: pull_request event ならbuildする
+
+      - name: pull_request event で、build-imagesラベルを持つ持たないを環境変数BUILD_IMAGESに代入
         run: |
-          should_build_images="${{ contains(fromJson(steps.pull_request_labels.outputs.data).*.name, 'build-images') }}"
+          should_build_images="${{ contains(fromJson(steps.hoge.outputs.data).*.name, 'build-images') }}"
           echo "BUILD_IMAGES=$should_build_images" >> $GITHUB_ENV
         if: github.event_name == 'pull_request'
 
-      - name: pushかrelease event ならbuildする
+      - name: pushかrelease event なら環境変数BUILD_IMAGESにtrueを代入する
         run: |
           echo "BUILD_IMAGES=true" >> $GITHUB_ENV
         if: github.event_name == 'push' || github.event_name == 'release'
 
-      - name: GitHubOutputにbuild-imagesを登録
+      - name: GITHUB_OUTPUTにbuild-images=環境変数BUILD_IMAGESを登録
         run: |
           echo "build-images=$BUILD_IMAGES" >> $GITHUB_OUTPUT
 
   build-images:
     runs-on: ubuntu-latest
+    description: say_hello.outputs.build-images == 'true'ならばBuild and Pushする
     needs:
       - say_hello
     if: needs.say_hello.outputs.build-images == 'true'

@@ -6,8 +6,3 @@ bench:
 change-go-version:
 	@ssh isu-myself2 'sudo systemctl disable --now isu-ruby'
 	@ssh isu-myself2 'sudo systemctl enable --now isu-go'
-
-.PHONY: foobar
-foobar:
-	@echo "foobar"
-

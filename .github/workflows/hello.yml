@@ -51,7 +51,7 @@ jobs:
       - say_hello
     steps:
       - name: Build and push
-        run: echo "debug ${{ needs.say_hello.outputs }}"
+        run: echo "debug ${{ needs.say_hello.outputs.build-images }}"
 
   # say_hello.outputs.build-images == 'true'ならばBuild and Pushする
   build-images:

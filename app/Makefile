@@ -10,3 +10,8 @@ change-go-version:
 .PHONY: hello
 hello:
 	@echo "Hello, makefile!"
+
+.PHONY: foobar
+foobar:
+	@echo "foobar"
+

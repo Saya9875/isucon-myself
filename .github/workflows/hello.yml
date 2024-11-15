@@ -45,6 +45,14 @@ jobs:
         run: |
           echo "build-images=$BUILD_IMAGES" >> $GITHUB_OUTPUT
 
+  build-images:
+    runs-on: ubuntu-latest
+    needs:
+      - say_hello
+    steps:
+      - name: Build and push
+        run: echo "debug ${{ needs.say_hello.outputs }}"
+
   # say_hello.outputs.build-images == 'true'ならばBuild and Pushする
   build-images:
     runs-on: ubuntu-latest

@@ -15,6 +15,8 @@ jobs:
   # outputs.build-images = (pull_request && build-imagesラベルを持つ) || push || release
   say_hello:
     runs-on: ubuntu-latest
+    outputs:
+      build-images: ${{ steps.set_output.outputs.build-images }}
     steps:
       - name: Print Hello World
         run: echo "Hello World! ${{ github.event_name }}"

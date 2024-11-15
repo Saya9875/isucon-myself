@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print Hello World
-        run: echo "Hello World!"
+        run: echo "Hello World! ${{ github.event_name }}"
       - name: pull_request event ならラベルを取得する
         id: hoge
         uses: octokit/request-action@v2.x
